@@ -1,5 +1,5 @@
-# Note 2
-[project euler](https://projecteuler.net/about)
+# Lesson 2
+ - IDE
 
 ## Tools to install
  - Intellij Idea
