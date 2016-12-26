@@ -1,0 +1,88 @@
+<html>
+
+<head>
+    <title>Interest Calculator</title>
+    <script>
+        function isValidNumber(element) {
+            if (element.value == "") {
+                alert('missing ' + element.id);
+                return false;
+            } else if (Number.isNaN(element.value * 1)) {
+                alert('The ' + element.id + ' is not a numnber, please correct it.')
+                return false;
+            }
+            return true;
+        }
+        function calculate() {
+            if (isValidNumber(capital)
+                && isValidNumber(interestRate)
+                && isValidNumber(duration)) {
+                loading.style.display = 'block';
+                console.log('calculating...');
+                setTimeout(function () {
+                    amount.textContent = (capital.value * 1) + ( capital.value * 1)
+                        * (interestRate.value * 1 / 100)
+                        * (duration.value * 1);
+                    loading.style.display = 'none';
+                }, 2 * 1000);
+            }
+        }
+    </script>
+</head>
+
+<body>
+<table>
+    <!--
+      <thead>
+      </thead>
+    -->
+    <tbody>
+    <tr>
+        <td>
+            Amount to borrow:
+        </td>
+        <td>
+            <input id="capital">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Interest Rate:
+        </td>
+        <td>
+            <input id="interestRate">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Time:
+        </td>
+        <td>
+            <input id="duration">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button onclick="calculate()">
+                Calculate
+            </button>
+        </td>
+        <td>
+            <img id="loading"
+                 src="http://loading.io/assets/img/hourglass.svg"
+                 style="display: none">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Amount to return:
+        </td>
+        <td>
+            <span id="amount"></span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+
+</html>
