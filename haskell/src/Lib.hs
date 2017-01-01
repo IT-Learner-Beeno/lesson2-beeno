@@ -20,3 +20,9 @@ q2 = sum $ filter even $ takeWhile (<4000000) fib
 
 fib :: [Int]
 fib = 1:2:(zipWith (+) fib (tail fib))
+
+q3 = 32
+
+factor n = [x| x <- [1..n], rem n x == 0]
+
+isPrime x = (==2) $ length $ factor x
