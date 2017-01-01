@@ -1,0 +1,187 @@
+<html>
+<head>
+    <style>
+        table {
+            background: lightgoldenrodyellow;
+            border: orange solid 1px;
+            border-radius: 20px;
+        }
+
+        .disc {
+            color: black;
+        }
+
+        .not_disc {
+            color: lightgoldenrodyellow;
+        }
+
+        body * {
+            margin: 5px;
+        }
+
+        thead {
+            background: orange;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+</head>
+<body>
+<span id="clock"></span>
+<table class="mytable">
+    <thead>
+    <tr>
+        <td>A</td>
+        <td>B</td>
+        <td>C</td>
+    </tr>
+    </thead>
+    <tbody id="hanoi">
+    </tbody>
+</table>
+<label>
+    Level:
+    <input id="level">
+</label>
+<br>
+<script>
+    function createCol() {
+        let col = {};
+        col.disces = [];
+        col.addDisc = function (disc) {
+            col.disces.push(disc);
+        };
+        col.getTopDisc = function () {
+            if (col.disces.length > 0)
+                return col.disces[col.disces.length - 1];
+            else
+                return Number.POSITIVE_INFINITY;
+        };
+        /**
+         * @return boolean : valid or not
+         * */
+        col.moveDisc = function (targetCol) {
+            let topDisc = col.getTopDisc();
+            if (Number.isFinite(topDisc)
+                && (targetCol.getTopDisc() > topDisc)
+            ) {
+                let top = col.disces.pop();
+                targetCol.disces.push(top);
+                return true;
+            }
+            return false;
+        };
+        return col;
+    }
+    let colA = createCol();
+    let colB = createCol();
+    let colC = createCol();
+    let srcCol;
+    function updateUI() {
+        console.log('updateUI');
+        $('#hanoi').find('td').each(function (i, e) {
+            let td = $(e);
+            let col = getCol(td.attr('col'));
+            let rowNumber = Math.floor(i / 3);
+            let totalRow = level.value * 1;
+            let numberOfSpace = totalRow - col.disces.length;
+            if (rowNumber < numberOfSpace) {
+                /* show space */
+                td.text('_');
+                td.addClass('not_disc');
+                td.removeClass('disc');
+            } else {
+                /* show disc */
+                let index = rowNumber - numberOfSpace;
+                let number = col.disces[col.disces.length - 1 - index];
+                td.text(number + '');
+                td.addClass('disc');
+                td.removeClass('not_disc');
+            }
+        })
+    }
+    function getCol(colName) {
+        switch (colName) {
+            case 'A':
+                return colA;
+            case 'B':
+                return colB;
+            case 'C':
+                return colC;
+        }
+    }
+    function initTable(level) {
+        console.log('initTable', level);
+        let hanoi = document.getElementById('hanoi');
+        hanoi.innerHTML = '';
+        function newCell(colName) {
+            let td = $('<td>');
+            td.attr('col', colName);
+            td.click(function () {
+                console.log('clicked');
+                if (srcCol) {
+                    if (srcCol.moveDisc(getCol(colName)))
+                        srcCol = undefined;
+                    else
+                        srcCol = getCol(colName);
+                } else {
+                    srcCol = getCol(colName);
+                }
+                updateUI();
+            });
+            return td[0];
+        }
+
+        for (let i = level; i > 0; i--) {
+            let tr = document.createElement('tr');
+            tr.appendChild(newCell('A'));
+            tr.appendChild(newCell('B'));
+            tr.appendChild(newCell('C'));
+            hanoi.appendChild(tr);
+            colA.disces.push(i);
+        }
+    }
+    let timer;
+    let startTime;
+    function start() {
+        colA.disesc = [];
+        colB.disesc = [];
+        colC.disesc = [];
+        initTable(level.value * 1);
+        $('#btnStart').hide();
+        $('#btnStop').show();
+        startTime = new Date();
+        timer = setInterval(updateClock, 10);
+        updateClock();
+        updateUI();
+    }
+    function formatTime(start, end) {
+        let diff = end.getTime() - start.getTime();
+        let diff_millsec = diff % 1000;
+        let diff_sec = ((diff - diff_millsec) / 1000) % 60;
+        let diff_min = ((diff - diff_millsec - diff_sec * 1000) / 1000 / 60);
+        if (diff_sec < 10) {
+            diff_sec = '0' + diff_sec;
+        }
+        diff_millsec = '' + diff_millsec;
+        while (diff_millsec.length < 3) {
+            diff_millsec = '0' + diff_millsec;
+        }
+        return diff_min + ':' + diff_sec + '.' + diff_millsec;
+    }
+    function updateClock() {
+        let now = new Date();
+        let text = formatTime(startTime, now);
+        $('#clock').text(text);
+    }
+    function stop() {
+        if (confirm('Are you sure to stop the game?')) {
+            $('#btnStart').show();
+            $('#btnStop').hide();
+            clearInterval(timer);
+        }
+    }
+</script>
+<button id="btnStart" onclick="start()">start</button>
+<button id="btnStop" onclick="stop()" style="display: none">stop</button>
+</body>
+</html>
