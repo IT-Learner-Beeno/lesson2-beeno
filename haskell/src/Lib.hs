@@ -21,8 +21,31 @@ q2 = sum $ filter even $ takeWhile (<4000000) fib
 fib :: [Int]
 fib = 1:2:(zipWith (+) fib (tail fib))
 
-q3 = 32
+q3 = foldl1 max $ filter isPrime' $ factor'
 
-factor n = [x| x <- [1..n], rem n x == 0]
+--factor n = [x| x <- [1..n], rem n x == 0]
 
-isPrime x = (==2) $ length $ factor x
+nextFactor n last
+  | last == n = error "already the last factor"
+  | otherwise = nextFactor' n last (last+1)
+
+nextFactor' n last trying
+  | rem n trying == 0 = trying
+  | otherwise         = nextFactor' n last (trying+1)
+
+factor' n = factor'' n 1 n []
+
+factor'' :: Int -> Int -> Int -> [Int] -> [Int]
+factor'' n a b acc
+  | (nextFactor n a) < b =
+    let
+      nextA = nextFactor n a
+      nextB = div n nextA
+    in
+      factor'' n nextA nextB (a:b:acc)
+  | otherwise            = a:b:acc
+
+--isPrime x = (==2) $ length $ factor x
+
+isPrime' 1 = False
+isPrime' x = nextFactor x 1 == x
