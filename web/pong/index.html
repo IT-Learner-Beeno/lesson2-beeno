@@ -1,0 +1,93 @@
+<html>
+<head>
+    <title>
+        eat Beeno up
+    </title>
+    <style>
+        .bar {
+            width: 25px;
+            position: absolute;
+            border-radius: 25px;
+        }
+
+        .player {
+            background: orange;
+            height: 25%;
+            top: 8px;
+        }
+
+        .computer {
+            background: #9aff3c;
+            height: 100%;
+        }
+
+        .ball {
+            background: red;
+            width: 40px;
+            height: 40px;
+            border-radius: 25px;
+            position: absolute;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <script>
+        let speed = 100;
+        let speedX = speed / 1000;
+        let speedY = -speed / 1000 / 2;
+        let ballX;
+        let ballY;
+        let lastTime;
+        function init() {
+            ballX = document.body.clientWidth / 2;
+            ballY = document.body.clientHeight / 2;
+            ball.style.left = ballX + 'px';
+            ball.style.top = ballY + 'px';
+            lastTime = new Date().getTime() - 1;
+            update();
+        }
+        function update(event) {
+            let now = new Date().getTime();
+            let deltaTime = now = lastTime;
+            let offset = $(document.body).offset().top;
+            pc.style.height = document.body.clientHeight - offset * 2 + 'px';
+            let barLeft = document.body.clientWidth - offset - 25;
+            player.style.left = barLeft + 'px';
+            if (event) {
+                player.style.top =
+                    event.clientY - $(player).height() / 2 + 'px';
+            }
+            if (ballX - 20 <= offset + 25) {
+                /* hit left bound */
+//                let left_limit = (offset + 25 + 20);
+//                let though_distance = left_limit - ballX;
+                speedX = Math.abs(speedX);
+//                let move_distance = total_move_distance - though_distance;
+            } else if (ballX + 20 >= barLeft) {
+                /* has collision */
+                speedX = -Math.abs(speedX);
+            }
+            let total_move_distance = (-speedX) * deltaTime;
+            ballX += total_move_distance;
+//            else {
+//                /* no collision */
+//                ballX = ballX + speedX * (now - lastTime);
+//                ballY = ballY + speedY * (now - lastTime);
+//            }
+            if (ballY <= (20 + offset) || ballY + 20 >= (document.body.clientHeight - offset)) {
+                speedY *= 1;
+            }
+            console.log('speedY', speedY);
+            console.log('ballY', ballY);
+            ball.style.left = (ballX - 20) + 'px';
+            ball.style.top = (ballY - 20) + 'px';
+            lastTime = now;
+            setTimeout(update, 1000 / 60);
+        }
+    </script>
+</head>
+<body onload="init()" onmousemove="update(event)">
+<div id="ball" class="ball"></div>
+<div id="pc" class="bar computer"></div>
+<div id="player" class="bar player"></div>
+</body>
+</html>
